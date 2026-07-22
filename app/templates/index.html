@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-4"><i class="fas fa-chart-line"></i> Dashboard</h1>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total_students }}</div>
+            <div class="stat-label">Total Students</div>
+            <hr>
+            <a href="{{ url_for('students.list_students') }}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card success">
+            <div class="stat-value">{{ stats.total_courses }}</div>
+            <div class="stat-label">Total Courses</div>
+            <hr>
+            <a href="{{ url_for('courses.list_courses') }}" class="btn btn-sm btn-success">View All</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card info">
+            <div class="stat-value">{{ stats.total_grades }}</div>
+            <div class="stat-label">Total Grades</div>
+            <hr>
+            <a href="{{ url_for('grades.list_grades') }}" class="btn btn-sm btn-info">View All</a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h3 class="mb-3">Quick Actions</h3>
+        <div class="btn-group" role="group" aria-label="Quick Actions">
+            <a href="{{ url_for('students.add_student') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Add Student
+            </a>
+            <a href="{{ url_for('courses.add_course') }}" class="btn btn-success">
+                <i class="fas fa-book-plus"></i> Add Course
+            </a>
+            <a href="{{ url_for('grades.add_grade') }}" class="btn btn-info">
+                <i class="fas fa-star-plus"></i> Add Grade
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Students -->
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h3 class="mb-3">Recent Students</h3>
+        {% if recent_students %}
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Enrollment Number</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in recent_students %}
+                            <tr>
+                                <td>
+                                    <strong>{{ student.get_full_name() }}</strong>
+                                </td>
+                                <td>{{ student.enrollment_number }}</td>
+                                <td>{{ student.email }}</td>
+                                <td>
+                                    <a href="{{ url_for('students.view_student', student_id=student.id) }}" class="btn btn-sm btn-primary">View</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle"></i> No students added yet. <a href="{{ url_for('students.add_student') }}">Add a student now</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

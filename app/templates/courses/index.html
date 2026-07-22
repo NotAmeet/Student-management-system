@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Courses - Student Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="fas fa-book"></i> Courses</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('courses.add_course') }}" class="btn btn-primary">
+            <i class="fas fa-book-plus"></i> Add New Course
+        </a>
+    </div>
+</div>
+
+<!-- Courses Table -->
+{% if courses.items %}
+    <div class="table-container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Course Code</th>
+                    <th>Course Name</th>
+                    <th>Credits</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses.items %}
+                    <tr>
+                        <td><strong>{{ course.course_code }}</strong></td>
+                        <td>{{ course.course_name }}</td>
+                        <td><span class="badge bg-primary">{{ course.credits }}</span></td>
+                        <td>{{ course.description[:50] + '...' if course.description and course.description|length > 50 else course.description or 'N/A' }}</td>
+                        <td>
+                            <a href="{{ url_for('courses.edit_course', course_id=course.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <form method="POST" action="{{ url_for('courses.delete_course', course_id=course.id) }}" style="display:inline;" onsubmit="return confirmDelete('{{ course.course_code }}')">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if courses.pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if courses.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('courses.list_courses', page=courses.prev_num) }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for page_num in courses.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num == courses.page %}
+                            <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('courses.list_courses', page=page_num) }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if courses.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('courses.list_courses', page=courses.next_num) }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle"></i> No courses added yet. <a href="{{ url_for('courses.add_course') }}">Add a course now</a>
+    </div>
+{% endif %}
+{% endblock %}

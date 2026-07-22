@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Grade - Student Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1><i class="fas fa-star-edit"></i> Edit Grade</h1>
+    </div>
+</div>
+
+<div class="form-container">
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.student_id.label }}
+            {% if form.student_id.errors %}
+                {{ form.student_id(class="form-control is-invalid") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.student_id.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.student_id(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.course_id.label }}
+            {% if form.course_id.errors %}
+                {{ form.course_id(class="form-control is-invalid") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.course_id.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.course_id(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.score.label }}
+            <small class="form-text text-muted">Enter a score between 0 and 100</small>
+            {% if form.score.errors %}
+                {{ form.score(class="form-control is-invalid") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.score.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.score(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.semester.label }}
+            <small class="form-text text-muted">e.g., Spring 2024, Fall 2023</small>
+            {% if form.semester.errors %}
+                {{ form.semester(class="form-control is-invalid") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.semester.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.semester(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.remarks.label }}
+            {% if form.remarks.errors %}
+                {{ form.remarks(class="form-control is-invalid", rows="4") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.remarks.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.remarks(class="form-control", rows="4") }}
+            {% endif %}
+        </div>
+
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            {{ form.submit(class="btn btn-primary", value="Update Grade") }}
+            <a href="{{ url_for('grades.list_grades') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

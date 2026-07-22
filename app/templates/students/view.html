@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student.get_full_name() }} - Student Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="fas fa-user"></i> {{ student.get_full_name() }}</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('students.edit_student', student_id=student.id) }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <form method="POST" action="{{ url_for('students.delete_student', student_id=student.id) }}" style="display:inline;" onsubmit="return confirmDelete('{{ student.get_full_name() }}')">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Student Information -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Student Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th>Full Name:</th>
+                        <td>{{ student.get_full_name() }}</td>
+                    </tr>
+                    <tr>
+                        <th>Enrollment Number:</th>
+                        <td><span class="badge bg-info">{{ student.enrollment_number }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Phone:</th>
+                        <td>{{ student.phone or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth:</th>
+                        <td>{{ student.date_of_birth.strftime('%d-%m-%Y') if student.date_of_birth else 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Additional Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th>Address:</th>
+                        <td>{{ student.address or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Created:</th>
+                        <td>{{ student.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Updated:</th>
+                        <td>{{ student.updated_at.strftime('%d-%m-%Y %H:%M') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Courses:</th>
+                        <td><span class="badge bg-warning">{{ grades|length }}</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Student Grades -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Enrolled Courses and Grades</h3>
+        {% if grades %}
+            <div class="table-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Semester</th>
+                            <th>Score</th>
+                            <th>Grade</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                            <tr>
+                                <td><strong>{{ grade.course.course_code }}</strong></td>
+                                <td>{{ grade.course.course_name }}</td>
+                                <td>{{ grade.semester }}</td>
+                                <td>{{ grade.score }}</td>
+                                <td>
+                                    {% if grade.grade == 'A' %}
+                                        <span class="badge bg-success">{{ grade.grade }}</span>
+                                    {% elif grade.grade == 'B' %}
+                                        <span class="badge bg-info">{{ grade.grade }}</span>
+                                    {% elif grade.grade == 'C' %}
+                                        <span class="badge bg-warning">{{ grade.grade }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ grade.grade }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('grades.edit_grade', grade_id=grade.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form method="POST" action="{{ url_for('grades.delete_grade', grade_id=grade.id) }}" style="display:inline;" onsubmit="return confirmDelete('this grade')">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle"></i> No grades recorded yet for this student.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <a href="{{ url_for('students.list_students') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Students
+        </a>
+    </div>
+</div>
+{% endblock %}

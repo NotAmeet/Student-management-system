@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Grades - Student Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="fas fa-star"></i> Grades</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('grades.add_grade') }}" class="btn btn-primary">
+            <i class="fas fa-star-plus"></i> Add New Grade
+        </a>
+    </div>
+</div>
+
+<!-- Grades Table -->
+{% if grades.items %}
+    <div class="table-container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Course Code</th>
+                    <th>Semester</th>
+                    <th>Score</th>
+                    <th>Grade</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades.items %}
+                    <tr>
+                        <td>{{ grade.student.get_full_name() }}</td>
+                        <td><strong>{{ grade.course.course_code }}</strong></td>
+                        <td>{{ grade.semester }}</td>
+                        <td>{{ grade.score }}</td>
+                        <td>
+                            {% if grade.grade == 'A' %}
+                                <span class="badge bg-success">{{ grade.grade }}</span>
+                            {% elif grade.grade == 'B' %}
+                                <span class="badge bg-info">{{ grade.grade }}</span>
+                            {% elif grade.grade == 'C' %}
+                                <span class="badge bg-warning">{{ grade.grade }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ grade.grade }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('grades.edit_grade', grade_id=grade.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <form method="POST" action="{{ url_for('grades.delete_grade', grade_id=grade.id) }}" style="display:inline;" onsubmit="return confirmDelete('this grade')">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if grades.pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if grades.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('grades.list_grades', page=grades.prev_num) }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for page_num in grades.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num == grades.page %}
+                            <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('grades.list_grades', page=page_num) }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if grades.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('grades.list_grades', page=grades.next_num) }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle"></i> No grades recorded yet. <a href="{{ url_for('grades.add_grade') }}">Add a grade now</a>
+    </div>
+{% endif %}
+{% endblock %}

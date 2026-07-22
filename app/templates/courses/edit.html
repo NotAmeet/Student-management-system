@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Course - Student Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1><i class="fas fa-book-edit"></i> Edit Course</h1>
+    </div>
+</div>
+
+<div class="form-container">
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.course_code.label }}
+            {% if form.course_code.errors %}
+                {{ form.course_code(class="form-control is-invalid") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.course_code.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.course_code(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.course_name.label }}
+            {% if form.course_name.errors %}
+                {{ form.course_name(class="form-control is-invalid") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.course_name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.course_name(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.description.label }}
+            {% if form.description.errors %}
+                {{ form.description(class="form-control is-invalid", rows="4") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.description.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.description(class="form-control", rows="4") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.credits.label }}
+            {% if form.credits.errors %}
+                {{ form.credits(class="form-control is-invalid") }}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.credits.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.credits(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            {{ form.submit(class="btn btn-primary", value="Update Course") }}
+            <a href="{{ url_for('courses.list_courses') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
