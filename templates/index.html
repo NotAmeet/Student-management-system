@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="display-4">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </h1>
+            <p class="text-muted">Welcome to Student Management System</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="card stat-card border-left-primary">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="stat-value text-primary">{{ total_students }}</div>
+                            <div class="stat-label">Total Students</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-primary opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card stat-card border-left-success">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="stat-value text-success">{{ total_students }}</div>
+                            <div class="stat-label">Active Records</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-success opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card stat-card border-left-info">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="stat-value text-info">100%</div>
+                            <div class="stat-label">System Status</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-heartbeat fa-2x text-info opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-flash"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Add New Student
+                        </a>
+                        <a href="{{ url_for('list_students') }}" class="btn btn-info">
+                            <i class="fas fa-list"></i> View All Students
+                        </a>
+                        <a href="{{ url_for('list_students') }}?page=1" class="btn btn-secondary">
+                            <i class="fas fa-search"></i> Search Students
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Students -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Recently Added Students</h5>
+                </div>
+                {% if recent_students %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Enrollment Number</th>
+                                    <th>GPA</th>
+                                    <th>Added</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in recent_students %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ student.get_full_name() }}</strong>
+                                        </td>
+                                        <td>{{ student.email }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ student.enrollment_number }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{% if student.gpa >= 3.5 %}success{% elif student.gpa >= 3.0 %}info{% elif student.gpa >= 2.5 %}warning{% else %}danger{% endif %}">
+                                                {{ "%.2f"|format(student.gpa) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ student.created_at.strftime('%d %b %Y') }}</small>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('view_student', student_id=student.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="card-body">
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle"></i> No students found. <a href="{{ url_for('add_student') }}">Add a new student</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

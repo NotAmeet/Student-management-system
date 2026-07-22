@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student.get_full_name() }} - Student Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-5">
+                <i class="fas fa-user"></i> {{ student.get_full_name() }}
+            </h1>
+            <p class="text-muted">Student ID: <strong>#{{ student.id }}</strong></p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('edit_student', student_id=student.id) }}" class="btn btn-warning btn-lg">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <form method="POST" action="{{ url_for('delete_student', student_id=student.id) }}" style="display:inline;" 
+                  onsubmit="return confirmDelete('{{ student.get_full_name() }}');">
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Student Information -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-circle"></i> Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <h6 class="text-muted mb-0">First Name</h6>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0"><strong>{{ student.first_name }}</strong></p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <h6 class="text-muted mb-0">Last Name</h6>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0"><strong>{{ student.last_name }}</strong></p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <h6 class="text-muted mb-0">Date of Birth</h6>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">
+                                <strong>
+                                    {% if student.date_of_birth %}
+                                        {{ student.date_of_birth.strftime('%d %B %Y') }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </strong>
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h6 class="text-muted mb-0">Address</h6>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0"><strong>{{ student.address or 'N/A' }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Contact & Academic Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <h6 class="text-muted mb-0">Email</h6>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">
+                                <strong>
+                                    <a href="mailto:{{ student.email }}" class="text-decoration-none">{{ student.email }}</a>
+                                </strong>
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <h6 class="text-muted mb-0">Phone</h6>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">
+                                <strong>
+                                    <a href="tel:{{ student.phone }}" class="text-decoration-none">{{ student.phone }}</a>
+                                </strong>
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <h6 class="text-muted mb-0">Enrollment #</h6>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">
+                                <span class="badge bg-secondary" style="font-size: 0.95rem;">{{ student.enrollment_number }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h6 class="text-muted mb-0">GPA</h6>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">
+                                <span class="badge bg-{% if student.gpa >= 3.5 %}success{% elif student.gpa >= 3.0 %}info{% elif student.gpa >= 2.5 %}warning{% else %}danger{% endif %}" style="font-size: 0.95rem;">
+                                    {{ "%.2f"|format(student.gpa) }}
+                                </span>
+                                <small class="text-muted">{{ student.get_grade_level() }}</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timestamps -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Record Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted mb-0">Created At:</p>
+                            <p class="mb-0"><strong>{{ student.created_at.strftime('%d %B %Y, %H:%M:%S') }}</strong></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted mb-0">Last Updated:</p>
+                            <p class="mb-0"><strong>{{ student.updated_at.strftime('%d %B %Y, %H:%M:%S') }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{{ url_for('list_students') }}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Back to Students
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
